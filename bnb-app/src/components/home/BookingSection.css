@@ -1,0 +1,90 @@
+/* src/components/home/BookingSectionHome.css (or BookingSection.css) */
+.booking-section-home { /* Renamed class for clarity if this is specific to homepage */
+  padding: 20px 15px; /* Mobile padding - or use .section-padding from App.css */
+  background-color: #000000; /* Handled by .bg-dark-primary */
+  color: #ffffff;             /* Handled by .bg-dark-primary */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.price-info-home { /* Renamed class */
+  font-size: 14px; /* Mobile font size */
+  /* color: #f0f0f0; (from .bg-dark-primary) */
+  margin-bottom: 15px;
+}
+
+.price-amount-home { /* Renamed class */
+  font-size: 18px; /* Mobile font size */
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.book-now-button-home { /* Renamed class, assuming it's a Link styled as button-secondary */
+  /* .button-secondary styles from App.css will apply, like: */
+  /* background-color: #ffffff; */
+  /* color: #000000; */
+  /* border: 1px solid #000000; */
+  padding: 12px 40px; /* Mobile padding from your original */
+  font-size: 15px;    /* Mobile font size from your original */
+  font-weight: bold;
+  border-radius: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  display: block; /* For Link to behave like button with width/margin auto */
+  text-align: center;
+}
+/* Override button-secondary for this specific context if needed */
+.book-now-button-home {
+    background-color: #333; /* Dark grey from your original BookingSection.css */
+    color: #ffffff;
+    border: 1px solid #555;
+}
+.book-now-button-home:hover {
+    background-color: #444;
+    border-color: #666;
+}
+
+
+/* Responsive adjustments for BookingSectionHome */
+@media (min-width: 768px) { /* Tablet */
+  .booking-section-home {
+    padding: 25px 20px;
+  }
+  .price-info-home {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+  .price-amount-home {
+    font-size: 22px;
+  }
+  .book-now-button-home {
+    padding: 14px 50px;
+    font-size: 16px;
+    max-width: 300px;
+  }
+}
+
+@media (min-width: 1024px) { /* Desktop */
+  .booking-section-home {
+    padding: 30px 25px;
+    /* Could become a wider bar with items side-by-side if design changes */
+    /* flex-direction: row;
+    justify-content: space-around; */
+  }
+  .price-info-home {
+    font-size: 17px;
+  }
+  .price-amount-home {
+    font-size: 24px;
+  }
+  .book-now-button-home {
+    padding: 15px 60px;
+    font-size: 17px;
+    max-width: 320px;
+  }
+}

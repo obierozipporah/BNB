@@ -1,0 +1,118 @@
+.order-food-section {
+  background-color: #fffdef; /* Light yellow background from image */
+  padding: 20px 15px;
+}
+
+.menu-header {
+  margin-bottom: 20px;
+}
+
+.section-main-title {
+  font-size: 16px; /* OUR MENU title */
+  font-weight: bold;
+  color: #444;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+}
+
+.menu-tabs {
+  display: flex;
+  justify-content: center; /* Center tabs */
+  gap: 0px; /* No gap, border will separate */
+  border: 1px solid #d1b76a; /* Border around tabs from image */
+  border-radius: 20px; /* Rounded border for the group */
+  overflow: hidden; /* To make border-radius work with children */
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.menu-tabs button {
+  background-color: transparent;
+  border: none;
+  /* border-right: 1px solid #d1b76a; */ /* Separator */
+  padding: 8px 25px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #777;
+  cursor: pointer;
+}
+.menu-tabs button:last-child {
+  border-right: none;
+}
+.menu-tabs button.active {
+  background-color: #d1b76a; /* Active tab background */
+  color: #ffffff; /* Active tab text color */
+  font-weight: bold;
+}
+
+.menu-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.menu-item-card {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff; /* White background for item card */
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #f0e6c6; /* Light border for card */
+}
+
+.menu-item-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 12px;
+}
+
+.menu-item-details {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.menu-item-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 3px;
+}
+
+.menu-item-price {
+  font-size: 14px;
+  color: #666;
+}
+
+.menu-item-add-button {
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px; /* Slightly rounded square */
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-order-button {
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 15px;
+  font-size: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  width: 100%;
+  letter-spacing: 0.5px;
+}

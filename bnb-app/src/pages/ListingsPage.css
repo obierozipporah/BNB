@@ -1,0 +1,169 @@
+/* src/pages/ListingsPage.css */
+.listings-page-container {
+  background-color: #f8f9fa; /* A light, neutral background for the page */
+  /* .section-padding is applied from App.css if available, otherwise add padding here: */
+  /* padding: 20px 15px; */ 
+  min-height: calc(100vh - 120px); /* Adjust based on combined header/footer height */
+}
+
+.listings-page-title {
+  font-size: 28px; /* Prominent title */
+  font-weight: 700;
+  color: #2c3e50; /* Dark blue-grey */
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.listings-page-subtitle {
+  font-size: 16px;
+  color: #5a6570; /* Softer subtitle color */
+  text-align: center;
+  margin-bottom: 40px;
+  max-width: 600px; /* Constrain subtitle width for readability */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.listings-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column for mobile-first approach */
+  gap: 30px; /* Spacing between cards */
+}
+
+.listing-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Slightly softer shadow */
+  overflow: hidden; /* Ensures border-radius clips the image */
+  display: flex;
+  flex-direction: column; /* Stack image and content vertically */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.listing-card:hover {
+  transform: translateY(-6px); /* Subtle lift effect on hover */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.listing-card-image {
+  width: 100%;
+  height: 220px; /* Consistent image height */
+  object-fit: cover; /* Cover the area without distortion */
+  background-color: #e9ecef; /* Fallback background if image is transparent or loading */
+  border-bottom: 1px solid #eee; /* Separator if needed */
+}
+
+.listing-card-image.image-fell-back { /* Style for when placeholder is shown */
+  object-fit: contain; /* Show the placeholder nicely without stretching */
+  background-color: #e0e0e0; /* Background for the placeholder area */
+  padding: 10px; /* Padding around the placeholder icon/text if it's small */
+}
+
+
+.listing-card-content {
+  padding: 20px; /* Ample padding within the card content */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allows content to fill space and push button to bottom */
+}
+
+.listing-card-title {
+  font-size: 20px; /* Larger title for listing */
+  font-weight: 600;
+  color: #343a40;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.listing-card-location {
+  font-size: 14px; /* Slightly larger location text */
+  color: #6c757d;
+  margin-bottom: 12px;
+  /* No icon, so no flex needed here unless text itself needs specific alignment */
+}
+
+.listing-card-info-bar {
+  display: flex;
+  gap: 12px; /* Spacing for info items */
+  font-size: 13px; /* Slightly larger info text */
+  color: #495057;
+  margin-bottom: 15px; /* More space below info bar */
+  flex-wrap: wrap; /* Allow items to wrap on small cards */
+}
+.listing-card-info-bar span {
+  padding-right: 12px; /* Space before border */
+  position: relative; /* For pseudo-element border */
+}
+.listing-card-info-bar span:not(:last-child)::after { /* Separator using pseudo-element */
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 12px; /* Height of the separator */
+  border-right: 1px solid #e0e0e0;
+}
+
+
+.listing-card-price-rating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px; /* More space before button */
+  margin-top: auto; /* Pushes this block (and button below) to the bottom */
+}
+
+.listing-card-price {
+  font-size: 17px;
+  color: #28a745; /* Green for price, good contrast */
+}
+.listing-card-price strong {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.listing-card-rating {
+  /* display: flex; (No longer needed for icon alignment) */
+  /* align-items: center; */
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+  text-align: right; /* Align rating to the right */
+}
+.listing-reviews {
+  font-size: 13px; /* Slightly larger reviews text */
+  color: #6c757d;
+  margin-left: 5px; /* Spacing from rating number */
+}
+
+.listing-card-button {
+  /* .button-primary or .button-secondary styles from App.css will apply */
+  width: 100%; /* Make button full width within its content area */
+  padding-top: 12px; /* Slightly more padding for primary action */
+  padding-bottom: 12px;
+  font-size: 15px;
+  margin-top: 10px; /* Ensure consistent space above if description is short */
+}
+
+.listings-empty-message {
+  text-align: center;
+  font-size: 16px;
+  color: #777;
+  padding: 40px 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Responsive grid for wider screens - currently commented out as app container is narrow */
+/*
+@media (min-width: 768px) { 
+  .listings-grid {
+    grid-template-columns: repeat(2, 1fr); // Example: 2 columns for tablet
+  }
+}
+@media (min-width: 1024px) {
+  .listings-grid {
+    grid-template-columns: repeat(3, 1fr); // Example: 3 columns for desktop
+  }
+}
+*/

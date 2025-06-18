@@ -1,0 +1,36 @@
+/* src/pages/HomePage.css */
+
+.homepage-container {
+  /* No specific background needed if sections or App.css handles it */
+}
+
+/* Wrappers for different visual sections */
+.listing-section-wrapper,
+.amenities-section-wrapper, /* Ensure Amenities section has its own wrapper if using distinct bg */
+.additional-info-wrapper { /* For Host, Rules, Guidelines if they share a background */
+  /* .section-padding and background classes (e.g., .bg-cream-light) 
+     are applied directly in HomePage.js via className from App.css styles.
+     Add specific wrapper styles here only if necessary beyond that. */
+}
+
+/* Styling for the "OUR LISTING" link and heading */
+.our-listing-title-link {
+  text-decoration: none;
+  display: block;
+  margin-bottom: 10px; /* Space above the main listing title from ListingDetails */
+}
+
+.section-main-title-home { /* Styles "OUR LISTING" text itself */
+  font-size: 14px; /* As seen in home.jpg */
+  font-weight: bold;
+  color: #5c5c5c; /* Dark greyish text */
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 10px 0; /* Padding around the text itself */
+  transition: color 0.2s ease;
+}
+
+.our-listing-title-link:hover .section-main-title-home {
+  color: #000000; /* Darken on hover to indicate interactivity */
+}

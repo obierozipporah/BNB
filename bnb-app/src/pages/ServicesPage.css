@@ -1,0 +1,11 @@
+.services-page {
+  /* The overall background for the services area, if different from App.css app-container */
+  /* background-color: #f0f0f0; */ /* Example: light grey */
+  min-height: 100vh;
+}
+
+.service-content-area {
+  /* Padding and background for the content displayed below the quick links */
+  padding: 0px; /* Specific sections will have their own padding & background */
+  /* background-color: #ffffff; */ /* Example: white */
+}

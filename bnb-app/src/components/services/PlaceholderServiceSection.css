@@ -1,0 +1,24 @@
+.placeholder-service-section {
+  padding: 40px 20px;
+  text-align: center;
+  background-color: #fffdef; /* Consistent light yellow */
+  min-height: 300px; /* Give it some space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.placeholder-service-section h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.placeholder-service-section p {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}

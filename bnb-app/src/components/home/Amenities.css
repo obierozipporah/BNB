@@ -1,0 +1,96 @@
+/* src/components/home/Amenities.css */
+
+.amenities-section {
+  /* Assuming padding is handled by a parent wrapper with .section-padding */
+  /* Example: padding: 30px 15px; */
+}
+
+.amenities-title {
+  font-size: 18px; 
+  font-weight: bold;
+  color: #333333;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Mobile: 2 columns */
+  gap: 20px 15px; /* Row and column gap */
+}
+
+.amenity-item {
+  display: flex;
+  align-items: center; /* Vertically aligns icon and text */
+  text-align: left;
+}
+
+.amenity-icon-container {
+  margin-right: 12px; /* Space between icon and text */
+  color: #555555; /* Default color for icons - react-icons will inherit this */
+  font-size: 22px; /* Base size for icons - react-icons will scale with this */
+  line-height: 1; /* Helps align some icons */
+  flex-shrink: 0; /* Prevents icon from shrinking */
+  
+  width: 24px; /* Ensure consistent space for the icon container */
+  height: 24px; /* Ensure consistent space for the icon container */
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+}
+
+/* The SVG rendered by react-icons will be a child of .amenity-icon-container */
+.amenity-icon-container svg {
+  display: block; /* Good practice for SVGs */
+}
+
+.amenity-text {
+  font-size: 14px;
+  color: #484848;
+  line-height: 1.5;
+}
+
+.amenities-unavailable-message {
+  text-align: center;
+  font-size: 15px;
+  color: #666;
+  padding: 20px;
+}
+
+/* --- Responsive Adjustments (from previous iteration) --- */
+@media (min-width: 768px) { /* Tablet */
+  .amenities-title {
+    font-size: 20px;
+  }
+  .amenities-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px 18px;
+  }
+  .amenity-icon-container {
+    font-size: 24px; /* Slightly larger icons on tablet */
+    width: 26px;
+    height: 26px;
+  }
+  .amenity-text {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1024px) { /* Desktop */
+  .amenities-title {
+    font-size: 22px;
+    margin-bottom: 35px;
+  }
+  .amenities-grid {
+    grid-template-columns: repeat(4, 1fr); /* Or repeat(3, 1fr) for more space */
+    gap: 25px 20px;
+  }
+  .amenity-icon-container {
+    font-size: 26px; /* Larger icons on desktop */
+    width: 28px;
+    height: 28px;
+  }
+  .amenity-text {
+    font-size: 15px; /* Can remain 15px or increase slightly if desired */
+  }
+}

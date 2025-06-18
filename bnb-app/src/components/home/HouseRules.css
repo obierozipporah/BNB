@@ -1,0 +1,67 @@
+/* src/components/home/HouseRules.css */
+.house-rules-section {
+  padding: 25px 15px;
+  margin-top: 15px;
+  border-top: 1px solid #eadeb8;
+  border-bottom: 1px solid #eadeb8;
+  /* background-color: #fffdef; (Handled by parent wrapper in HomePage.js) */
+}
+
+.rules-main-title { /* Renamed from .rules-title in your uploaded CSS for consistency */
+  font-size: 17px; /* Slightly larger title */
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: left;
+  text-decoration: underline; /* --- ADDED UNDERLINE --- */
+  text-decoration-color: #d1b76a; /* Optional: specific underline color */
+  text-underline-offset: 3px; /* Optional: space between text and underline */
+}
+
+.rule-item {
+  display: flex;
+  align-items: center; /* Vertically align icon and text */
+  margin-bottom: 12px;
+}
+
+.rule-icon-container { /* NEW: Container for the icon */
+  margin-right: 10px; /* Space between icon and text */
+  color: #555; /* Default icon color */
+  font-size: 18px; /* Adjust icon size as needed */
+  line-height: 1; /* Helps with vertical alignment */
+  flex-shrink: 0; /* Prevent icon from shrinking */
+  width: 20px; /* Consistent width for icon area */
+  text-align: center; /* Center icon if it's smaller than container */
+}
+/* Your previous .rule-icon class is replaced by .rule-icon-container styling */
+
+.rule-text {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.6; /* Improved readability */
+}
+
+.rules-note {
+  font-size: 13px; /* Slightly larger note */
+  color: #666;
+  line-height: 1.6;
+  margin-top: 20px;
+  text-align: left;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .rules-main-title {
+    font-size: 18px;
+  }
+  .rule-icon-container {
+    font-size: 20px;
+  }
+  .rule-text {
+    font-size: 15px;
+  }
+  .rules-note {
+    font-size: 14px;
+  }
+}
