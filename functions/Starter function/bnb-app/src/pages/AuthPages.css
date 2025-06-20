@@ -1,0 +1,103 @@
+/* src/pages/AuthPages.css */
+.auth-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Align form to top */
+  padding-top: 40px;
+  padding-bottom: 40px;
+  min-height: calc(100vh - 120px); /* Adjust based on your header/footer height */
+  background-color: #f8f9fa; /* Light background for auth pages */
+}
+
+.auth-form-container {
+  background-color: #ffffff;
+  padding: 30px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.auth-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+.auth-form .form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.auth-form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #454545;
+  margin-bottom: 6px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-form input:focus {
+  border-color: #2AAA8A; /* Jungle green focus color */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(42, 170, 138, 0.2);
+}
+
+.auth-button {
+  width: 100%;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.auth-error-message {
+  color: #d9534f;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.auth-switch-link {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #555;
+}
+
+.auth-switch-link a {
+  color: #2AAA8A; /* Jungle green */
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.auth-switch-link a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .auth-form-container {
+    padding: 25px 20px;
+    margin: 0 10px;
+    box-shadow: none;
+    border: 1px solid #eee;
+  }
+  .auth-title {
+    font-size: 22px;
+  }
+}

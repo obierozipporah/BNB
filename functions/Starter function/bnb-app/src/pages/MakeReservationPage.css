@@ -1,0 +1,53 @@
+/* src/pages/MakeReservationPage.css */
+.reservation-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #f8f9fa;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.reservation-form-wrapper {
+  background-color: #fffdef; /* Light yellow from designs */
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+.reservation-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.reservation-subtitle {
+  font-size: 16px;
+  color: #555;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+/* Re-using styles for form elements. */
+.date-selector { display: flex; gap: 15px; margin-bottom: 25px; }
+.date-input-group { flex: 1; text-align: left; background-color: #ffffff; border: 1px solid #e0d8c0; border-radius: 6px; padding: 8px 12px; cursor: pointer; }
+.date-input-group label { display: block; font-size: 12px; color: #777; margin-bottom: 3px; }
+.date-input-group span { font-size: 15px; color: #333; display: block; font-weight: 500; }
+.guest-selection-section { text-align: left; margin-bottom: 25px; }
+.section-title { font-size: 17px; font-weight: 600; color: #333; margin-bottom: 15px; }
+.guest-counter { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0eade; }
+.guest-counter:last-child { border-bottom: none; }
+.guest-category { font-size: 15px; color: #444; font-weight: 500; }
+.guest-age-range { font-size: 12px; color: #777; }
+.counter-controls { display: flex; align-items: center; gap: 10px; }
+.counter-controls button { background-color: transparent; border: 1px solid #d0c8b0; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #555; font-size: 16px; font-weight: bold; }
+.counter-controls button:hover { background-color: #f8f5ed; }
+.counter-controls span { font-size: 16px; color: #333; min-width: 20px; text-align: center; }
+.wishlist-section { text-align: left; margin-bottom: 25px; }
+.wishlist-subtitle { font-size: 13px; color: #666; margin-bottom: 10px; }
+.wishlist-section textarea { width: 100%; box-sizing: border-box; min-height: 70px; border: 1px solid #e0d8c0; border-radius: 6px; padding: 10px; font-size: 14px; font-family: inherit; resize: vertical; }
+.main-action-button.reserve { width: 100%; margin-top: 10px; padding-top: 12px; padding-bottom: 12px; }

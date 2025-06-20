@@ -1,0 +1,51 @@
+.service-quick-links-container {
+  background-color: #3a3a3a; /* Dark background from image */
+  padding: 20px 15px;
+  color: #ffffff;
+}
+
+.quick-links-header {
+  font-size: 14px;
+  color: #e0e0e0; /* Light grey text */
+  margin-bottom: 15px;
+  text-align: left; /* As seen in image */
+}
+
+.quick-links-grid {
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  gap: 10px;
+}
+
+.quick-link-button {
+  background-color: #000000; /* Black buttons */
+  color: #ffffff;
+  border: 1px solid #555555; /* Subtle border */
+  border-radius: 25px; /* Fully rounded */
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-align: left; /* Text aligned left */
+  width: 100%; /* Full width */
+}
+
+.quick-link-button .service-icon {
+  margin-right: 12px;
+  font-size: 18px; /* Adjust icon size */
+  width: 20px; /* Fixed width for alignment */
+  text-align: center;
+}
+
+.quick-link-button.active {
+  background-color: #c1a061; /* Example active color, adjust from image (gold/yellowish) */
+  /* Or just a border change if the image implies that */
+  border-color: #ffffff;
+  font-weight: bold;
+}
+
+.quick-link-button:hover {
+  background-color: #222222;
+}
