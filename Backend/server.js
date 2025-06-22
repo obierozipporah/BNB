@@ -4,92 +4,157 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const path = require('path');
+const nodemailer = require('nodemailer');
 
 const app = express();
-const PORT = 5000; // We'll run our backend on this port
+const PORT = 5000; // Your backend runs on this port
 
-// --- Middleware Setup ---
-app.use(cors()); // Allows your React app to talk to this server
-app.use(bodyParser.json()); // Parses incoming JSON data from requests
+// --- Middleware ---
+app.use(cors());
+app.use(bodyParser.json());
 
-// --- Database Path ---
+// --- Database Configuration ---
 const dbPath = path.join(__dirname, 'db.json');
 
-// --- Helper Functions to Read/Write to our JSON DB ---
-const readUsers = () => {
-    const data = fs.readFileSync(dbPath);
-    return JSON.parse(data).users;
+const readDb = () => {
+    const data = fs.readFileSync(dbPath, 'utf-8');
+    return JSON.parse(data);
 };
 
-const writeUsers = (users) => {
-    const data = JSON.stringify({ users }, null, 2);
-    fs.writeFileSync(dbPath, data);
+const writeDb = (data) => {
+    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
 };
 
-// --- API Routes ---
-
-// 1. User Sign Up Endpoint
-app.post('/api/signup', async (req, res) => {
-    const { name, email, password } = req.body;
-    
-    if (!name || !email || !password) {
-        return res.status(400).json({ message: "All fields are required." });
+// --- Email Transporter ---
+// IMPORTANT: In a real app, use environment variables for these credentials!
+const transporter = nodemailer.createTransport({
+    host: 'smtp.sendgrid.net',
+    port: 587,
+    auth: {
+        user: 'apikey', // This is always 'apikey' for SendGrid
+        pass: 'YOUR_SENDGRID_API_KEY' // <-- REPLACE THIS
     }
+});
+const HOST_EMAIL = 'YOUR_HOST_EMAIL@example.com'; // <-- REPLACE THIS
 
-    const users = readUsers();
 
-    // Check if user already exists
-    const existingUser = users.find(user => user.email === email);
-    if (existingUser) {
-        return res.status(400).json({ message: "User with this email already exists." });
-    }
+// --- Auth Endpoints (Unchanged) ---
+app.post('/api/signup', async (req, res) => { /* ...Your existing signup code... */ });
+app.post('/api/login', async (req, res) => { /* ...Your existing login code... */ });
 
-    // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = {
-        id: Date.now().toString(), // Simple unique ID
-        name,
-        email,
-        password: hashedPassword // Store the hashed password
+// ===================================
+// --- RESERVATION WORKFLOW ROUTES ---
+// ===================================
+
+// GET /api/reservations - Fetches all reservations for the calendar
+app.get('/api/reservations', (req, res) => {
+    const db = readDb();
+    res.status(200).json(db.reservations);
+});
+
+// POST /api/reservations - A client submits a booking request
+app.post('/api/reservations', async (req, res) => {
+    const db = readDb();
+    const { userId, userEmail, checkInDate, checkOutDate, guests } = req.body;
+
+    const newReservation = {
+        id: `res_${Date.now()}`,
+        status: 'pending',
+        userId,
+        userEmail,
+        checkInDate,
+        checkOutDate,
+        guests
     };
 
-    users.push(newUser);
-    writeUsers(users);
+    db.reservations.push(newReservation);
+    writeDb(db);
 
-    console.log('New user signed up:', newUser);
-    res.status(201).json({ message: "User created successfully!", userId: newUser.id });
+    // Create unique confirmation and rejection links
+    const confirmationLink = `http://localhost:${PORT}/api/reservations/manage?id=${newReservation.id}&action=confirm`;
+    const rejectionLink = `http://localhost:${PORT}/api/reservations/manage?id=${newReservation.id}&action=reject`;
+
+    // Send notification email to the host
+    try {
+        await transporter.sendMail({
+            from: '"BNB Website" <noreply@yourbnb.com>',
+            to: HOST_EMAIL,
+            subject: `NEW Booking Request: ${checkInDate} to ${checkOutDate}`,
+            html: `
+                <h1>New Reservation Request</h1>
+                <p><strong>Guest:</strong> ${userEmail}</p>
+                <p><strong>Dates:</strong> ${checkInDate} to ${checkOutDate}</p>
+                <p>Please confirm or reject this booking by clicking a link below:</p>
+                <a href="${confirmationLink}" style="background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Confirm Booking</a>
+                <a href="${rejectionLink}" style="background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-left: 10px;">Reject Booking</a>
+            `
+        });
+        console.log(`Reservation request from ${userEmail} sent to host.`);
+        res.status(201).json(newReservation);
+    } catch (emailError) {
+        console.error("Failed to send reservation email:", emailError);
+        res.status(500).json({ message: "Reservation saved, but failed to notify host." });
+    }
 });
 
-// 2. User Login Endpoint
-app.post('/api/login', async (req, res) => {
-    const { email, password } = req.body;
+// GET /api/reservations/manage - The endpoint the host clicks in the email
+app.get('/api/reservations/manage', (req, res) => {
+    const { id, action } = req.query;
+    const db = readDb();
+    
+    const reservation = db.reservations.find(r => r.id === id);
 
-    if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required." });
+    if (!reservation) {
+        return res.status(404).send('<h1>Reservation Not Found</h1><p>This reservation may have already been handled.</p>');
+    }
+
+    if (action === 'confirm') {
+        reservation.status = 'confirmed';
+        writeDb(db);
+        console.log(`Reservation ${id} confirmed by host.`);
+        return res.send('<h1>Booking Confirmed!</h1><p>The reservation has been confirmed and the calendar has been updated.</p>');
     }
     
-    const users = readUsers();
-    
-    // Find the user by email
-    const user = users.find(u => u.email === email);
-    if (!user) {
-        return res.status(401).json({ message: "Invalid credentials." });
+    if (action === 'reject') {
+        reservation.status = 'rejected';
+        writeDb(db);
+        console.log(`Reservation ${id} rejected by host.`);
+        return res.send('<h1>Booking Rejected</h1><p>The reservation has been rejected.</p>');
     }
 
-    // Compare the submitted password with the stored hashed password
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordCorrect) {
-        return res.status(401).json({ message: "Invalid credentials." });
-    }
-
-    console.log('User logged in:', user.email);
-    // In a real app, you would return a JWT token here. For now, we send a success message.
-    res.status(200).json({ message: "Login successful!", user: { id: user.id, name: user.name, email: user.email }});
+    res.status(400).send('<h1>Invalid Action</h1>');
 });
 
 
+// ===============================
+// --- SERVICE REQUEST WORKFLOW ---
+// ===============================
+
+app.post('/api/services', async (req, res) => {
+    const { userEmail, serviceType, details } = req.body;
+    console.log('Service request received:', req.body);
+
+     try {
+        await transporter.sendMail({
+            from: '"BNB Website" <noreply@yourbnb.com>',
+            to: HOST_EMAIL,
+            subject: `New Service Request: ${serviceType}`,
+            html: `
+                <h1>New Service Request from ${userEmail}</h1>
+                <p><strong>Service:</strong> ${serviceType}</p>
+                <p><strong>Details:</strong> ${details}</p>
+            `
+        });
+        res.status(200).json({ message: "Service request received and host has been notified." });
+    } catch (emailError) {
+        console.error('Failed to send service request email:', emailError);
+        res.status(500).json({ message: "Request received, but failed to notify host." });
+    }
+});
+
+
+// --- Start Server ---
 app.listen(PORT, () => {
     console.log(`Backend server is running on http://localhost:${PORT}`);
 });

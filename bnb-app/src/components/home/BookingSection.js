@@ -1,48 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './BookingSection.css';
-// We need to check the user's login status here
-import { account } from '../../appwrite';
 
-const BookingSection = () => {
+function BookingSection() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  // Check for a logged-in user when the component mounts
+  // This hook checks if a user is logged in by looking in localStorage
   useEffect(() => {
-    const checkUser = async () => {
-      try {
-        await account.get();
-        setIsLoggedIn(true);
-      } catch (error) {
-        setIsLoggedIn(false);
-      }
-    };
-    checkUser();
+    const user = localStorage.getItem('user');
+    if (user) {
+      setIsLoggedIn(true);
+    }
   }, []);
 
   const handleBookNowClick = () => {
     if (isLoggedIn) {
-      // If the user is logged in, send them directly to the reservation page
+      // If user is logged in, go directly to make the reservation
       navigate('/make-reservation');
     } else {
-      // If not logged in, send them to the login page
-      // We pass state to tell the login page where to redirect back to.
-      alert('You need to log in to make a reservation.');
+      // If user is NOT logged in, redirect them to the login page
+      // and pass the destination page in the 'state' object.
+      alert('You must log in to make a booking.');
       navigate('/login', { state: { from: '/make-reservation' } });
     }
   };
 
   return (
-    <div className="booking-section">
+    <div className="booking-section-container">
       <h2>Ready to book your stay?</h2>
       <p>Check availability and secure your spot at Birne's BNB.</p>
-      {/* This button now has smart logic */}
       <button onClick={handleBookNowClick} className="book-now-button">
         Book Now
       </button>
     </div>
   );
-};
+}
 
 export default BookingSection;

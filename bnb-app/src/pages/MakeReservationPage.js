@@ -1,91 +1,115 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-// Use curly braces {} to import by name
-import { account, databases } from '../appwrite'; 
-import { ID } from 'appwrite';
-import './MakeReservationPage.css'; // Your specific styling
+import { useNavigate, useLocation } from 'react-router-dom';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css'; // Default calendar styles
+import './MakeReservationPage.css';      // Custom calendar styles
+import './AuthPages.css';                  // Re-use some form styles
 
 function MakeReservationPage() {
-    const [currentUser, setCurrentUser] = useState(null);
+    const [user, setUser] = useState(null);
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    
-    // ---- IMPORTANT ----
-    // Replace these with your actual IDs from the Appwrite console
-    const DATABASE_ID = '667417e9003b302c1164'; // Replace with your actual Database ID
-    const RESERVATIONS_COLLECTION_ID = '667417fe0030588f98d0'; // Replace with your actual 'reservations' Collection ID
+    const location = useLocation();
 
+    const [dateRange, setDateRange] = useState([new Date(), new Date()]);
+    const [bookedDates, setBookedDates] = useState([]);
+
+    // Check if user is logged in by looking at localStorage
     useEffect(() => {
-        const fetchUser = async () => {
+        const loggedInUser = JSON.parse(localStorage.getItem('user'));
+        if (loggedInUser) {
+            setUser(loggedInUser);
+        } else {
+            alert("You must be logged in to make a reservation.");
+            navigate('/login', { state: { from: location.pathname } });
+        }
+    }, [navigate, location.pathname]);
+
+    // Fetch confirmed reservations to disable dates on the calendar
+    useEffect(() => {
+        const fetchReservations = async () => {
             try {
-                // Use the account service directly
-                const user = await account.get();
-                setCurrentUser(user);
-            } catch (e) {
-                setError('You must be logged in to make a reservation.');
-                console.error("Failed to get user:", e);
-                // Optional: redirect to login page after a delay
-                // setTimeout(() => navigate('/login'), 3000);
+                const response = await fetch('http://localhost:5000/api/reservations');
+                const reservations = await response.json();
+                const disabledDates = [];
+                reservations
+                    .filter(res => res.status === 'confirmed')
+                    .forEach(res => {
+                        let currentDate = new Date(new Date(res.checkInDate).toISOString().slice(0, 10));
+                        const endDate = new Date(new Date(res.checkOutDate).toISOString().slice(0, 10));
+                        
+                        while (currentDate <= endDate) {
+                            disabledDates.push(new Date(currentDate));
+                            currentDate.setDate(currentDate.getDate() + 1);
+                        }
+                    });
+                setBookedDates(disabledDates);
+            } catch (err) {
+                console.error("Could not fetch booked dates:", err);
             }
         };
-        fetchUser();
-    }, [navigate]);
+        fetchReservations();
+    }, []);
 
-    const handleReservation = async (e) => {
+    // Handle the reservation form submission
+    const handleReservationSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
-        if (!currentUser) {
-            setError('Please log in before making a reservation.');
-            return;
-        }
-
-        if (!DATABASE_ID || !RESERVATIONS_COLLECTION_ID || DATABASE_ID.includes('YOUR_')) {
-            setError("Developer error: Database or Collection ID is not set. Please check the code.");
-            return;
-        }
-
-        // TODO: Get these values from your form state
         const reservationData = {
-            userId: currentUser.$id,
-            userEmail: currentUser.email,
-            checkInDate: '2025-08-01',
-            checkOutDate: '2025-08-05',
-            guests: JSON.stringify({ adults: 2, children: 1 }),
-            status: 'pending',
+            userId: user.id,
+            userEmail: user.email,
+            checkInDate: dateRange[0].toISOString().split('T')[0],
+            checkOutDate: dateRange[1].toISOString().split('T')[0],
+            guests: "2 Adults", // This is an example, you can add form inputs for this
         };
 
         try {
-            // Use the databases service directly
-            await databases.createDocument(
-                DATABASE_ID,
-                RESERVATIONS_COLLECTION_ID,
-                ID.unique(),
-                reservationData
-            );
-            alert('Reservation request sent successfully!');
-            navigate('/dashboard'); // Navigate to a dashboard or confirmation page
-
+            const response = await fetch('http://localhost:5000/api/reservations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reservationData),
+            });
+            if (!response.ok) throw new Error('Failed to send reservation request.');
+            
+            alert('Reservation request sent! The host will email you to confirm.');
+            navigate('/');
         } catch (err) {
-            console.error("Reservation failed:", err);
-            setError('Could not submit your reservation. Please try again later.');
+            setError(err.message);
         }
+    };
+
+    // Function to pass to the calendar to disable certain dates
+    const tileDisabled = ({ date, view }) => {
+        if (view === 'month') {
+            return bookedDates.some(bookedDate => 
+                date.getFullYear() === bookedDate.getFullYear() &&
+                date.getMonth() === bookedDate.getMonth() &&
+                date.getDate() === bookedDate.getDate()
+            );
+        }
+        return false;
     };
 
     return (
         <div className="reservation-page-container">
             <div className="reservation-card">
-                <h1>Make a Reservation</h1>
-                <p>Confirm the details for your upcoming stay.</p>
-                <form onSubmit={handleReservation}>
-                    {/* Your form fields for check-in date, check-out date,
-                        and number of guests will go here.
-                    */}
+                <h1>Book Your Stay</h1>
+                <p>Select your check-in and check-out dates on the calendar. Unavailable dates are greyed out.</p>
+                <form onSubmit={handleReservationSubmit}>
+                    <div className="calendar-container">
+                        <Calendar
+                            onChange={setDateRange}
+                            value={dateRange}
+                            selectRange={true}
+                            minDate={new Date()}
+                            tileDisabled={tileDisabled}
+                        />
+                    </div>
                     {error && <p className="error-message">{error}</p>}
-                    <button type="submit" className="auth-button" disabled={!currentUser}>
+                    <button type="submit" className="reservation-button" disabled={!user}>
                         Request to Book
                     </button>
-                    {!currentUser && <p>Please log in to enable booking.</p>}
                 </form>
             </div>
         </div>
