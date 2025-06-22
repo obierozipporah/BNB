@@ -1,35 +1,51 @@
+/* src/index.css */
+
+/* --- Import a modern, friendly font from Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* --- Define the "Safari Sunset" color palette as CSS Variables --- */
+/* This makes it easy to maintain and use colors consistently everywhere. */
+:root {
+  --primary-accent: #D87C49;    /* Burnt Orange for buttons and highlights */
+  --secondary-accent: #707954;  /* Olive Green for secondary elements */
+  --background-main: #F7F5F2;  /* Creamy Off-White for body background */
+  --background-card: #FFFFFF;    /* Pure white for cards to make them pop */
+  --text-primary: #3D4043;      /* Charcoal Grey for main text */
+  --text-secondary: #5c5f62;   /* A softer grey for subtitles and descriptions */
+  --border-color: #EAEAEA;      /* A light grey for borders */
+}
+
+/* --- Global Styles --- */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #e8e8e8; /* Outer grey background for the entire window */
+  background-color: var(--background-main);
+  color: var(--text-primary);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
-/* Basic reset */
-*, *::before, *::after {
-  box-sizing: border-box;
+p {
+  color: var(--text-secondary);
+  line-height: 1.6;
 }
 
-h1, h2, h3, h4, h5, h6, p, ul, ol, li, figure, figcaption, blockquote, dl, dd {
-  margin: 0;
-  padding: 0;
+a {
+  color: var(--primary-accent);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--secondary-accent);
 }
 
 button {
-  font-family: inherit;
-  border: none;
-  background: none;
+  font-family: 'Poppins', sans-serif;
   cursor: pointer;
-}
-
-input, textarea, select {
-  font-family: inherit;
 }

@@ -1,16 +1,13 @@
-    import { Client, Account, Databases } from 'appwrite';
+import { Client, Account, Databases, ID } from 'appwrite';
 
-    // Initialize the Appwrite Client
-    const client = new Client();
+// This is the Appwrite SDK client object
+export const client = new Client();
 
-    client
-        .setEndpoint('https://fra.cloud.appwrite.io/v1') // Your API Endpoint from Appwrite console
-        .setProject('birnes-bnb');          // Your project ID from Appwrite console
+client
+    .setEndpoint('https://fra.cloud.appwrite.io/v1') // Your API Endpoint
+    .setProject('birnes-bnb');                      // Your Project ID
 
-    // Initialize Appwrite services
-    export const account = new Account(client);
-    export const databases = new Databases(client);
-
-    // You can export the client itself if needed elsewhere
-    export default client;
-    
+// We create and export the services we need as named constants
+export const account = new Account(client);
+export const databases = new Databases(client);
+export const AppwriteID = ID; 

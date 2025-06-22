@@ -1,124 +1,95 @@
-// src/pages/MakeReservationPage.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CalendarModal from '../components/booking/CalendarModal';
-import './MakeReservationPage.css';
-import { account, databases } from '../appwrite'; // Import Appwrite services
+// Use curly braces {} to import by name
+import { account, databases } from '../appwrite'; 
 import { ID } from 'appwrite';
-
-// IMPORTANT: Get these IDs from your Appwrite Console
-const DATABASE_ID = 'YOUR_BNB_DATABASE_ID';
-const RESERVATIONS_COLLECTION_ID = 'YOUR_RESERVATIONS_COLLECTION_ID';
+import './MakeReservationPage.css'; // Your specific styling
 
 function MakeReservationPage() {
-  // ... (all your existing useState hooks for the form) ...
-  const [currentUser, setCurrentUser] = useState(null);
-  const [bookedDates, setBookedDates] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState({ type: '', text: '' });
-
-  const [checkInDate, setCheckInDate] = useState('');
-const [checkOutDate, setCheckOutDate] = useState('');
-const [adults, setAdults] = useState(1);
-const [children, setChildren] = useState(0);
-const [infants, setInfants] = useState(0);
-const [wishlist, setWishlist] = useState([]);
-
-  
-  const navigate = useNavigate();
-
-  // Check if user is logged in & get user info
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const user = await account.get();
-        setCurrentUser(user);
-      } catch (error) {
-        navigate('/login'); // Redirect if not authenticated
-      }
-    };
-    checkAuth();
-  }, [navigate]);
-
-  // Listen for real-time updates on confirmed reservations
-  useEffect(() => {
-    // Appwrite Realtime subscription path
-    const subscriptionPath = `databases.${DATABASE_ID}.collections.${RESERVATIONS_COLLECTION_ID}.documents`;
+    const [currentUser, setCurrentUser] = useState(null);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
     
-    const unsubscribe = databases.client.subscribe(subscriptionPath, response => {
-      // This callback fires for every create, update, delete event
-      console.log('Realtime event received:', response);
-      // For simplicity, we refetch all booked dates on any change.
-      // A more advanced implementation would look at response.payload to see what changed.
-      fetchBookedDates();
-    });
+    // ---- IMPORTANT ----
+    // Replace these with your actual IDs from the Appwrite console
+    const DATABASE_ID = '667417e9003b302c1164'; // Replace with your actual Database ID
+    const RESERVATIONS_COLLECTION_ID = '667417fe0030588f98d0'; // Replace with your actual 'reservations' Collection ID
 
-    const fetchBookedDates = async () => {
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                // Use the account service directly
+                const user = await account.get();
+                setCurrentUser(user);
+            } catch (e) {
+                setError('You must be logged in to make a reservation.');
+                console.error("Failed to get user:", e);
+                // Optional: redirect to login page after a delay
+                // setTimeout(() => navigate('/login'), 3000);
+            }
+        };
+        fetchUser();
+    }, [navigate]);
+
+    const handleReservation = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        if (!currentUser) {
+            setError('Please log in before making a reservation.');
+            return;
+        }
+
+        if (!DATABASE_ID || !RESERVATIONS_COLLECTION_ID || DATABASE_ID.includes('YOUR_')) {
+            setError("Developer error: Database or Collection ID is not set. Please check the code.");
+            return;
+        }
+
+        // TODO: Get these values from your form state
+        const reservationData = {
+            userId: currentUser.$id,
+            userEmail: currentUser.email,
+            checkInDate: '2025-08-01',
+            checkOutDate: '2025-08-05',
+            guests: JSON.stringify({ adults: 2, children: 1 }),
+            status: 'pending',
+        };
+
         try {
-            // Fetch all confirmed reservations
-            const result = await databases.listDocuments(DATABASE_ID, RESERVATIONS_COLLECTION_ID /*, [Query.equal('status', 'confirmed')] */); // Add query when permissions allow
-            const dates = [];
-            result.documents.forEach(doc => {
-                // Here, you'd generate all dates in the range from checkInDate to checkOutDate
-                // For now, just blocking check-in date for simplicity
-                dates.push(doc.checkInDate); 
-            });
-            setBookedDates(dates);
-        } catch (error) {
-            console.error("Failed to fetch booked dates:", error);
+            // Use the databases service directly
+            await databases.createDocument(
+                DATABASE_ID,
+                RESERVATIONS_COLLECTION_ID,
+                ID.unique(),
+                reservationData
+            );
+            alert('Reservation request sent successfully!');
+            navigate('/dashboard'); // Navigate to a dashboard or confirmation page
+
+        } catch (err) {
+            console.error("Reservation failed:", err);
+            setError('Could not submit your reservation. Please try again later.');
         }
     };
 
-    fetchBookedDates(); // Fetch initial dates
-
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []);
-  
-  const handleMakeReservation = async (e) => {
-    e.preventDefault();
-    if (!currentUser) { /* ... error handling ... */ return; }
-    
-    setIsSubmitting(true);
-    setSubmitMessage({ type: '', text: '' });
-
-    try {
-      await databases.createDocument(
-        DATABASE_ID,
-        RESERVATIONS_COLLECTION_ID,
-        ID.unique(),
-        {
-          userId: currentUser.$id,
-          userEmail: currentUser.email,
-          checkInDate: checkInDate,
-          checkOutDate: checkOutDate,
-          guests: JSON.stringify({ adults, children, infants }), // Store object as JSON string
-          wishlist: wishlist,
-          status: 'pending',
-        }
-      );
-      setSubmitMessage({ type: 'success', text: 'Your reservation request has been sent!' });
-    } catch (error) {
-      console.error("Error creating reservation:", error);
-      setSubmitMessage({ type: 'error', text: 'Failed to send reservation request.' });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // ... (rest of your component: openCalendar, handleDateSelect, JSX, etc.) ...
-  return (
-    <div className="reservation-page-container section-padding">
-      <div className="reservation-form-wrapper">
-        <h1 className="reservation-title">Welcome, {currentUser ? currentUser.name : 'Guest'}!</h1>
-        {/* ... The rest of your form JSX ... */}
-        <button type="submit" onClick={handleMakeReservation} className="button-primary" disabled={isSubmitting}>
-          {isSubmitting ? 'Sending...' : 'Confirm Reservation'}
-        </button>
-      </div>
-      <CalendarModal bookedDates={bookedDates} /* ... other props ... */ />
-    </div>
-  );
+    return (
+        <div className="reservation-page-container">
+            <div className="reservation-card">
+                <h1>Make a Reservation</h1>
+                <p>Confirm the details for your upcoming stay.</p>
+                <form onSubmit={handleReservation}>
+                    {/* Your form fields for check-in date, check-out date,
+                        and number of guests will go here.
+                    */}
+                    {error && <p className="error-message">{error}</p>}
+                    <button type="submit" className="auth-button" disabled={!currentUser}>
+                        Request to Book
+                    </button>
+                    {!currentUser && <p>Please log in to enable booking.</p>}
+                </form>
+            </div>
+        </div>
+    );
 }
 
 export default MakeReservationPage;

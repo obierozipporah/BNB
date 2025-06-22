@@ -1,76 +1,65 @@
-// src/pages/SignUpPage.js
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './AuthPages.css';
-import { account, databases } from '../appwrite'; // Import Appwrite services
-import { ID } from 'appwrite';
-
-// IMPORTANT: Get these IDs from your Appwrite Console
-const DATABASE_ID = 'YOUR_BNB_DATABASE_ID';
-const USERS_COLLECTION_ID = 'YOUR_USERS_COLLECTION_ID';
 
 function SignUpPage() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-    setError('');
+    const handleSignUp = async (e) => {
+        e.preventDefault();
+        setError('');
+        try {
+            const response = await fetch('http://localhost:5000/api/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password }),
+            });
 
-    try {
-      // 1. Create the user account in Appwrite Auth
-      const user = await account.create(ID.unique(), email, password, name);
+            const data = await response.json();
 
-      // 2. Create a corresponding document in your 'users' collection
-      await databases.createDocument(
-        DATABASE_ID,
-        USERS_COLLECTION_ID,
-        user.$id, // Use the new user's ID as the document ID
-        { name, email }
-      );
+            if (!response.ok) {
+                throw new Error(data.message || 'Sign up failed.');
+            }
 
-      // 3. Log the user in by creating a session
-      await account.createEmailSession(email, password);
+            alert('Sign up successful! Please log in.');
+            navigate('/login');
 
-      console.log('Account created and user logged in!');
-      navigate('/make-reservation'); // Redirect to the authenticated reservation page
+        } catch (err) {
+            console.error("Sign up error:", err);
+            setError(err.message);
+        }
+    };
 
-    } catch (err) {
-      console.error("Error signing up with Appwrite:", err);
-      setError(err.message || 'Failed to create an account. Please try again.');
-    }
-  };
-
-  return (
-    // ... Your existing SignUpPage JSX form ...
-    <div className="auth-page-container section-padding">
-      <div className="auth-form-container">
-        <h1 className="auth-title">Create Your Birne's BNB Account</h1>
-        {error && <p className="auth-error-message">{error}</p>}
-        <form onSubmit={handleSignUp} className="auth-form" noValidate>
-          <div className="form-group">
-            <label htmlFor="name">Full Name</label>
-            <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email">Email Address</label>
-            <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          </div>
-          <button type="submit" className="button-primary auth-button">Create Account</button>
-        </form>
-        <p className="auth-switch-link">
-          Already have an account? <Link to="/login">Sign In</Link>
-        </p>
-      </div>
-    </div>
-  );
+    return (
+        <div className="auth-container">
+            <div className="auth-card">
+                <h2>Create Account</h2>
+                <form onSubmit={handleSignUp}>
+                    <div className="input-group">
+                        <label htmlFor="name">Name</label>
+                        <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="email">Email</label>
+                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="password">Password</label>
+                        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    </div>
+                    {error && <p className="error-message">{error}</p>}
+                    <button type="submit" className="auth-button">Sign Up</button>
+                </form>
+                <p className="auth-switch">
+                    Already have an account? <Link to="/login">Log In</Link>
+                </p>
+            </div>
+        </div>
+    );
 }
 
 export default SignUpPage;
